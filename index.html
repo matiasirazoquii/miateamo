@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¿Me amas? ❤️️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Great+Vibes&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            touch-action: manipulation;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .font-cursive {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        .font-title {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* Animación suave para el movimiento del botón */
+        .runaway-btn {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: absolute;
+        }
+
+        /* Corazones flotantes de fondo */
+        .heart-bg {
+            position: absolute;
+            opacity: 0.15;
+            animation: float 6s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(15deg); }
+        }
+
+        /* Pulsación romántica para la ilustración */
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .pulse-heart {
+            animation: pulse-slow 2.5s infinite ease-in-out;
+        }
+
+        /* Transiciones entre vistas */
+        .fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-100 via-pink-100 to-red-100 min-h-screen h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden">
+
+    <!-- Corazones flotantes de fondo para ambientación -->
+    <div class="heart-bg text-red-400 text-6xl top-10 left-8" style="animation-delay: 0s;">❤️</div>
+    <div class="heart-bg text-pink-400 text-5xl top-1/4 right-6" style="animation-delay: 1s;">💖</div>
+    <div class="heart-bg text-rose-400 text-7xl bottom-20 left-10" style="animation-delay: 2s;">💕</div>
+    <div class="heart-bg text-red-300 text-6xl bottom-10 right-12" style="animation-delay: 1.5s;">💗</div>
+    <div class="heart-bg text-pink-300 text-4xl top-12 right-1/3" style="animation-delay: 0.5s;">💓</div>
+
+    <!-- Tarjeta Principal (Pregunta) -->
+    <div id="questionCard" class="w-full max-w-sm bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-pink-200 text-center relative z-10 fade-in">
+        
+        <!-- Ilustración / Emoji lindo -->
+        <div class="mb-4 relative flex justify-center">
+            <div class="w-28 h-28 bg-rose-100 rounded-full flex items-center justify-center pulse-heart shadow-inner border-2 border-rose-200">
+                <span class="text-6xl">🥰</span>
+            </div>
+            <span class="absolute top-0 right-1/4 text-2xl animate-bounce">✨</span>
+        </div>
+
+        <h1 class="font-title text-3xl md:text-4xl font-bold text-rose-600 mb-2 tracking-wide">
+            ¿Me amas? ❤️
+        </h1>
+        <p class="text-rose-400 font-semibold text-sm mb-8">
+            Sé sincera conmigo... 🙈
+        </p>
+
+        <!-- Contenedor de Botones -->
+        <div id="buttonArea" class="relative w-full h-24 flex items-center justify-center">
+            
+            <!-- Botón SÍ -->
+            <button id="yesBtn" onclick="handleYes()" class="absolute left-4 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-title text-xl font-bold py-3.5 px-8 rounded-full shadow-lg shadow-rose-300/50 active:scale-95 transition-all duration-200 flex items-center gap-2">
+                <span>¡SÍ!</span> 💖
+            </button>
+
+            <!-- Botón NO (Escapista) -->
+            <button id="noBtn" class="runaway-btn bg-slate-200 hover:bg-slate-300 text-slate-600 font-title text-lg font-bold py-3.5 px-7 rounded-full shadow-md flex items-center gap-1">
+                <span>No</span> 🙈
+            </button>
+            
+        </div>
+    </div>
+
+    <!-- Tarjeta de Respuesta (Oculta al inicio) -->
+    <div id="successCard" class="hidden w-full max-w-sm bg-white/90 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-rose-300 text-center relative z-10">
+        
+        <!-- Icono decorativo final -->
+        <div class="mb-4 relative flex justify-center">
+            <div class="w-28 h-28 bg-gradient-to-tr from-rose-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg transform rotate-3">
+                <span class="text-6xl animate-pulse">👩‍❤️‍👨</span>
+            </div>
+            <span class="absolute -top-2 -right-2 text-3xl">🎉</span>
+            <span class="absolute -bottom-1 -left-2 text-3xl">💖</span>
+        </div>
+
+        <span class="inline-block bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+            ¡Lo sabía! 😍
+        </span>
+
+        <h2 class="font-title text-2xl md:text-3xl font-extrabold text-rose-600 mb-4 leading-tight">
+            YO TE AMO MÁS 💖
+        </h2>
+
+        <div class="bg-gradient-to-r from-rose-50 to-pink-50 border-2 border-dashed border-rose-300 rounded-2xl p-4 mb-4 shadow-sm">
+            <p class="font-bold text-rose-700 text-base md:text-lg uppercase tracking-wide flex items-center justify-center gap-1">
+                📸 PÁSAME CAPTURA DE ESTA PANTALLA
+            </p>
+        </div>
+
+        <p class="text-gray-500 text-xs font-medium italic">
+            Gracias por hacerme el novio más feliz del mundo 🌎✨
+        </p>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const questionCard = document.getElementById('questionCard');
+        const successCard = document.getElementById('successCard');
+
+        // Configuración inicial del botón NO dentro de su área
+        function initNoBtnPosition() {
+            noBtn.style.right = '16px';
+            noBtn.style.top = '50%';
+            noBtn.style.transform = 'translateY(-50%)';
+        }
+
+        // Función para mover el botón NO a un lugar aleatorio accesible de la pantalla
+        function escapeNoButton(e) {
+            if (e) e.preventDefault(); // Previene toques no deseados en móviles
+
+            const padding = 20; // Margen para que no quede pegado a los bordes
+            const btnWidth = noBtn.offsetWidth || 100;
+            const btnHeight = noBtn.offsetHeight || 50;
+
+            // Ancho y alto de la pantalla visible
+            const maxX = window.innerWidth - btnWidth - padding;
+            const maxY = window.innerHeight - btnHeight - padding;
+
+            // Generar posición aleatoria
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+            // Sacar del flujo normal si aún está dentro de la tarjeta
+            if (noBtn.parentNode !== document.body) {
+                document.body.appendChild(noBtn);
+            }
+
+            // Aplicar nueva posición
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
+            noBtn.style.transform = 'none';
+            noBtn.style.zIndex = '999';
+        }
+
+        // Eventos táctiles y de puntero para móviles y computadoras
+        // Se activa con 'touchstart' y 'mouseover' para garantizar que huya al instante
+        noBtn.addEventListener('touchstart', escapeNoButton, { passive: false });
+        noBtn.addEventListener('mouseover', escapeNoButton);
+        noBtn.addEventListener('click', escapeNoButton);
+
+        function handleYes() {
+            // Ocultar el botón "No" por si estaba flotando
+            noBtn.style.display = 'none';
+
+            // Ocultar tarjeta de pregunta y mostrar la de éxito
+            questionCard.classList.add('hidden');
+            successCard.classList.remove('hidden');
+            successCard.classList.add('fade-in');
+
+            // Lanzar animación de confeti con corazones
+            launchCelebration();
+        }
+
+        function launchCelebration() {
+            // Ráfaga inicial de confeti
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff2a6d', '#ff5e7e', '#ff99ac', '#ffffff']
+            });
+
+            // Lluvia continua de corazones suaves
+            const duration = 3 * 1000;
+            const animationEnd = Date.now() + duration;
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 5 * (timeLeft / duration);
+
+                // Confeti desde los dos lados inferiores
+                confetti({
+                    particleCount: particleCount,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.8 },
+                    colors: ['#e11d48', '#f43f5e', '#fb7185']
+                });
+                confetti({
+                    particleCount: particleCount,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.8 },
+                    colors: ['#e11d48', '#f43f5e', '#fb7185']
+                });
+            }, 250);
+        }
+
+        // Inicializar
+        window.onload = () => {
+            initNoBtnPosition();
+        };
+    </script>
+</body>
+</html>
